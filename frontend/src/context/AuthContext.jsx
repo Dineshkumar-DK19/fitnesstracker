@@ -1,84 +1,73 @@
 // ./src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
-import { loginUser, registerUser } from "../services/api";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Restore user from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
-  // LOGIN
-  const login = async (email, password) => {
-    try {
-      setError(null);
+  const register = async (fullName, username, email, password) => {
+    setError(null);
 
-      const data = await loginUser(email, password);
+    const users = JSON.parse(localStorage.getItem("users")) || [];
 
-      // Get stored registered users
-      const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+    const usernameExists = users.find(
+      (u) => u.username.toLowerCase() === username.toLowerCase()
+    );
 
-      // Find correct user by email
-      const existingUser = users.find((u) => u.email === email);
-
-      const userObj = {
-        email,
-        name: existingUser?.name || "User",
-        token: data.token,
-      };
-
-      setUser(userObj);
-      localStorage.setItem("user", JSON.stringify(userObj));
-
-      return true;
-    } catch (err) {
-      setError(err.message || "Login failed");
+    if (usernameExists) {
+      setError("Username already taken");
       return false;
     }
+
+    users.push({ fullName, username, email, password });
+
+    localStorage.setItem("users", JSON.stringify(users));
+
+    return true;
   };
 
-  // REGISTER
-  const register = async (name, email, password) => {
-    try {
-      setError(null);
+  const login = async (username, password) => {
+    setError(null);
 
-      await registerUser(name, email, password);
+    const users = JSON.parse(localStorage.getItem("users")) || [];
 
-      // Save registered user locally
-      const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+    const existingUser = users.find(
+      (u) =>
+        u.username.toLowerCase() === username.toLowerCase() &&
+        u.password === password
+    );
 
-      users.push({ name, email });
-
-      localStorage.setItem("registeredUsers", JSON.stringify(users));
-
-      return true;
-    } catch (err) {
-      setError(err.message || "Registration failed");
+    if (!existingUser) {
+      setError("Invalid username or password");
       return false;
     }
+
+    const userObj = {
+      username: existingUser.username,
+      fullName: existingUser.fullName,
+    };
+
+    setUser(userObj);
+    localStorage.setItem("user", JSON.stringify(userObj));
+
+    return true;
   };
 
-  // LOGOUT
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, login, register, logout, loading, error }}
-    >
-      {!loading && children}
+    <AuthContext.Provider value={{ user, register, login, logout, error }}>
+      {children}
     </AuthContext.Provider>
   );
 };

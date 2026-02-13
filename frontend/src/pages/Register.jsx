@@ -8,18 +8,18 @@ import { motion } from "framer-motion";
 
 const Register = () => {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const { register, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const success = await register(name, email, password);
-
+    const success = await register(name, username, email, password);
     if (success) {
-      navigate("/login"); // Redirect to login instead of dashboard
+      navigate("/login");
     }
   };
 
@@ -28,15 +28,10 @@ const Register = () => {
 
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-950" />
 
-      <div className="absolute top-[-10%] right-[-10%] w-72 sm:w-96 h-72 sm:h-96 bg-green-500/20 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-72 sm:w-96 h-72 sm:h-96 bg-emerald-600/20 rounded-full blur-[120px] animate-pulse" />
+      <GlassCard className="w-full max-w-md relative z-10 p-6 sm:p-8">
 
-      <GlassCard className="w-full max-w-md relative z-10 p-6 sm:p-8 border-green-500/20 shadow-green-500/5">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">
             Create Account
           </h2>
@@ -53,6 +48,7 @@ const Register = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
 
+            {/* Full Name */}
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
                 Full Name
@@ -61,12 +57,28 @@ const Register = () => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-green-500 outline-none"
                 placeholder="John Doe"
                 required
               />
             </div>
 
+            {/* Username */}
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-green-500 outline-none"
+                placeholder="john_07"
+                required
+              />
+            </div>
+
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
                 Email
@@ -75,12 +87,13 @@ const Register = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-green-500 outline-none"
                 placeholder="you@example.com"
                 required
               />
             </div>
 
+            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
                 Password
@@ -89,30 +102,24 @@ const Register = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-green-500 outline-none"
                 placeholder="••••••••"
                 required
               />
             </div>
 
-            <Button
-              type="submit"
-              variant="primary"
-              className="w-full py-3 shadow-[0_0_20px_rgba(34,197,94,0.5)]"
-            >
+            <Button type="submit" variant="primary" className="w-full py-3">
               Sign Up
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-400">
             Already have an account?
-            <Link
-              to="/login"
-              className="text-green-500 hover:text-green-400 ml-2 font-medium"
-            >
+            <Link to="/login" className="text-green-500 ml-2 font-medium">
               Login
             </Link>
           </div>
+
         </motion.div>
       </GlassCard>
     </div>

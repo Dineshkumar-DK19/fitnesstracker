@@ -7,52 +7,30 @@ import Button from "../components/Button";
 import { motion } from "framer-motion";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const { login, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await login(email, password);
-    if (success) {
-      navigate("/dashboard");
-    }
+    const success = await login(username, password);
+    if (success) navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black relative overflow-hidden px-4">
+    <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden px-4">
 
-      {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-950" />
 
-      {/* Background Blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-72 sm:w-96 h-72 sm:h-96 bg-green-500/20 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-72 sm:w-96 h-72 sm:h-96 bg-emerald-600/20 rounded-full blur-[120px] animate-pulse" />
+      <GlassCard className="w-full max-w-md relative z-10 p-6 sm:p-8">
 
-      {/* App Title */}
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 text-3xl sm:text-4xl font-extrabold text-white mb-8 text-center"
-      >
-        Fitness Tracker
-      </motion.h1>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
 
-      {/* Login Card */}
-      <GlassCard className="w-full max-w-md relative z-10 p-6 sm:p-8 border-green-500/20 shadow-green-500/5">
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">
-            Welcome Back
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6">
+            Login
           </h2>
-
-          <p className="text-gray-400 text-center mb-6">
-            Login to continue your journey
-          </p>
 
           {error && (
             <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-2 rounded-lg mb-6 text-sm text-center">
@@ -62,22 +40,20 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
-                Email
+                Username
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
-                placeholder="you@example.com"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-green-500 outline-none"
+                placeholder="john_07"
                 required
               />
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
                 Password
@@ -86,30 +62,24 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-green-500 outline-none"
                 placeholder="••••••••"
                 required
               />
             </div>
 
-            <Button
-              type="submit"
-              variant="primary"
-              className="w-full py-3 shadow-[0_0_20px_rgba(34,197,94,0.5)]"
-            >
+            <Button type="submit" variant="primary" className="w-full py-3">
               Login
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-400">
             Don’t have an account?
-            <Link
-              to="/register"
-              className="text-green-500 hover:text-green-400 ml-2 font-medium"
-            >
+            <Link to="/register" className="text-green-500 ml-2 font-medium">
               Sign up
             </Link>
           </div>
+
         </motion.div>
       </GlassCard>
     </div>
