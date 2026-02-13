@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Restore user on refresh
+  // Restore user from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -25,14 +25,15 @@ export const AuthProvider = ({ children }) => {
 
       const data = await loginUser(email, password);
 
-      // Temporary: extract name from email
-      const extractedName = email.split("@")[0];
-      const formattedName =
-        extractedName.charAt(0).toUpperCase() + extractedName.slice(1);
+      // Get stored registered users
+      const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+
+      // Find correct user by email
+      const existingUser = users.find((u) => u.email === email);
 
       const userObj = {
         email,
-        name: formattedName,
+        name: existingUser?.name || "User",
         token: data.token,
       };
 
@@ -46,14 +47,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // REGISTER (NO AUTO LOGIN)
+  // REGISTER
   const register = async (name, email, password) => {
     try {
       setError(null);
 
       await registerUser(name, email, password);
 
-      return true; // Only create account
+      // Save registered user locally
+      const users = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+
+      users.push({ name, email });
+
+      localStorage.setItem("registeredUsers", JSON.stringify(users));
+
+      return true;
     } catch (err) {
       setError(err.message || "Registration failed");
       return false;
